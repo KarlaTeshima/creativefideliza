@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,25 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useAuth } from '@/contexts/AuthContext';
-import { cadastrarCliente, adicionarPonto, buscarClientePorCodigo, Cliente } from '@/lib/supabaseClient';
+import { 
+  cadastrarCliente, 
+  adicionarPonto, 
+  buscarCliente, 
+  reiniciarPontos, 
+  Cliente, 
+  listarClientes,
+  buscarClientesComFiltro 
+} from '@/lib/supabaseClient';
+import ClientesTable from '@/components/ClientesTable';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 const AdminPanel = () => {
   const { isAuthenticated, login, logout } = useAuth();
@@ -22,14 +40,68 @@ const AdminPanel = () => {
   // Cadastro state
   const [formCadastro, setFormCadastro] = useState({
     nome: '',
+    sobrenome: '',
     telefone: '',
     codigo_cartao: ''
   });
   
   // Pontos state
-  const [codigoCartao, setCodigoCartao] = useState('');
+  const [termoBusca, setTermoBusca] = useState('');
   const [clienteAtual, setClienteAtual] = useState<Cliente | null>(null);
   const [pointsAdded, setPointsAdded] = useState(false);
+  
+  // Consulta clientes state
+  const [clientes, setClientes] = useState<Cliente[]>([]);
+  const [loadingClientes, setLoadingClientes] = useState(false);
+  const [filtros, setFiltros] = useState({
+    nome: '',
+    telefone: '',
+    codigo_cartao: '',
+    pontos: undefined as number | undefined
+  });
+
+  // Modal de confirmação
+  const [dialogOpen, setDialogOpen] = useState(false);
+  
+  useEffect(() => {
+    if (isAuthenticated) {
+      carregarClientes();
+    }
+  }, [isAuthenticated]);
+  
+  const carregarClientes = async () => {
+    setLoadingClientes(true);
+    try {
+      const data = await listarClientes();
+      setClientes(data);
+    } catch (error) {
+      console.error("Erro ao carregar clientes:", error);
+      toast({
+        title: "Erro ao carregar clientes",
+        description: "Não foi possível carregar a lista de clientes.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingClientes(false);
+    }
+  };
+  
+  const aplicarFiltros = async () => {
+    setLoadingClientes(true);
+    try {
+      const clientesFiltrados = await buscarClientesComFiltro(filtros);
+      setClientes(clientesFiltrados);
+    } catch (error) {
+      console.error("Erro ao filtrar clientes:", error);
+      toast({
+        title: "Erro ao filtrar clientes",
+        description: "Ocorreu um erro ao aplicar os filtros.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoadingClientes(false);
+    }
+  };
   
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,6 +115,31 @@ const AdminPanel = () => {
       ...formCadastro,
       [e.target.name]: e.target.value
     });
+  };
+  
+  const handleChangeFiltro = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.name === 'pontos') {
+      const pontos = e.target.value ? parseInt(e.target.value) : undefined;
+      setFiltros({
+        ...filtros,
+        pontos
+      });
+    } else {
+      setFiltros({
+        ...filtros,
+        [e.target.name]: e.target.value
+      });
+    }
+  };
+  
+  const limparFiltros = () => {
+    setFiltros({
+      nome: '',
+      telefone: '',
+      codigo_cartao: '',
+      pontos: undefined
+    });
+    carregarClientes();
   };
   
   const handleCadastrarCliente = async (e: React.FormEvent) => {
@@ -59,9 +156,14 @@ const AdminPanel = () => {
       // Reset form
       setFormCadastro({
         nome: '',
+        sobrenome: '',
         telefone: '',
         codigo_cartao: ''
       });
+      
+      // Recarregar a lista de clientes
+      carregarClientes();
+      
     } catch (error) {
       console.error("Erro ao cadastrar cliente:", error);
       toast({
@@ -75,10 +177,10 @@ const AdminPanel = () => {
   };
   
   const handleBuscarCliente = async () => {
-    if (!codigoCartao.trim()) {
+    if (!termoBusca.trim()) {
       toast({
-        title: "Código não informado",
-        description: "Por favor, informe o código do cartão.",
+        title: "Campo de busca vazio",
+        description: "Por favor, informe um termo para busca.",
         variant: "destructive"
       });
       return;
@@ -88,13 +190,13 @@ const AdminPanel = () => {
     setPointsAdded(false);
     
     try {
-      const cliente = await buscarClientePorCodigo(codigoCartao);
+      const cliente = await buscarCliente(termoBusca);
       setClienteAtual(cliente);
       
       if (!cliente) {
         toast({
           title: "Cliente não encontrado",
-          description: "Nenhum cliente encontrado com este código de cartão.",
+          description: "Nenhum cliente encontrado com este termo de busca.",
           variant: "destructive"
         });
       }
@@ -125,12 +227,46 @@ const AdminPanel = () => {
           title: "Ponto adicionado com sucesso!",
           description: `${clienteAtualizado.nome} agora possui ${clienteAtualizado.pontos} pontos.`
         });
+        
+        // Também atualiza a lista de clientes
+        carregarClientes();
       }
     } catch (error) {
       console.error("Erro ao adicionar ponto:", error);
       toast({
         title: "Erro ao adicionar ponto",
         description: "Ocorreu um erro ao adicionar o ponto.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  const handleReiniciarPontos = async () => {
+    if (!clienteAtual) return;
+    
+    setLoading(true);
+    setDialogOpen(false);
+    
+    try {
+      const clienteAtualizado = await reiniciarPontos(clienteAtual.codigo_cartao);
+      
+      if (clienteAtualizado) {
+        setClienteAtual(clienteAtualizado);
+        toast({
+          title: "Cliente premiado com sucesso!",
+          description: "Cartão reiniciado e pronto para reutilização."
+        });
+        
+        // Também atualiza a lista de clientes
+        carregarClientes();
+      }
+    } catch (error) {
+      console.error("Erro ao reiniciar pontos:", error);
+      toast({
+        title: "Erro ao premiar cliente",
+        description: "Ocorreu um erro ao reiniciar os pontos.",
         variant: "destructive"
       });
     } finally {
@@ -212,11 +348,12 @@ const AdminPanel = () => {
         </div>
       </header>
       
-      <main className="container max-w-4xl mx-auto py-8 px-4">
+      <main className="container max-w-7xl mx-auto py-8 px-4">
         <Tabs defaultValue="cadastro">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
+          <TabsList className="grid w-full grid-cols-3 mb-8">
             <TabsTrigger value="cadastro">Cadastro de Cliente</TabsTrigger>
             <TabsTrigger value="pontos">Gerenciamento de Pontos</TabsTrigger>
+            <TabsTrigger value="consulta">Consulta de Clientes</TabsTrigger>
           </TabsList>
           
           {/* Cadastro Tab */}
@@ -231,16 +368,29 @@ const AdminPanel = () => {
               <CardContent>
                 <form onSubmit={handleCadastrarCliente}>
                   <div className="grid gap-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="nome">Nome</Label>
-                      <Input 
-                        id="nome" 
-                        name="nome"
-                        value={formCadastro.nome}
-                        onChange={handleChangeCadastro}
-                        placeholder="Nome completo do cliente"
-                        required
-                      />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="nome">Nome</Label>
+                        <Input 
+                          id="nome" 
+                          name="nome"
+                          value={formCadastro.nome}
+                          onChange={handleChangeCadastro}
+                          placeholder="Nome do cliente"
+                          required
+                        />
+                      </div>
+                      
+                      <div className="grid gap-2">
+                        <Label htmlFor="sobrenome">Sobrenome</Label>
+                        <Input 
+                          id="sobrenome" 
+                          name="sobrenome"
+                          value={formCadastro.sobrenome}
+                          onChange={handleChangeCadastro}
+                          placeholder="Sobrenome do cliente"
+                        />
+                      </div>
                     </div>
                     
                     <div className="grid gap-2">
@@ -288,17 +438,17 @@ const AdminPanel = () => {
               <CardContent>
                 <div className="grid gap-6">
                   <div className="grid gap-2">
-                    <Label htmlFor="codigo_cartao_pontos">Código do Cartão NFC</Label>
+                    <Label htmlFor="termo_busca">Buscar Cliente</Label>
                     <div className="flex gap-2">
                       <Input 
-                        id="codigo_cartao_pontos" 
-                        value={codigoCartao}
-                        onChange={(e) => setCodigoCartao(e.target.value)}
-                        placeholder="Insira o código do cartão"
+                        id="termo_busca" 
+                        value={termoBusca}
+                        onChange={(e) => setTermoBusca(e.target.value)}
+                        placeholder="Nome, telefone ou código do cartão"
                       />
                       <Button 
                         onClick={handleBuscarCliente} 
-                        disabled={loading || !codigoCartao.trim()}
+                        disabled={loading || !termoBusca.trim()}
                       >
                         Buscar
                       </Button>
@@ -310,7 +460,9 @@ const AdminPanel = () => {
                       <div className="space-y-4">
                         <div>
                           <h3 className="font-medium">Cliente encontrado</h3>
-                          <p className="text-sm text-gray-500">{clienteAtual.nome} - {clienteAtual.telefone}</p>
+                          <p className="text-sm text-gray-500">
+                            {clienteAtual.nome} {clienteAtual.sobrenome} - {clienteAtual.telefone}
+                          </p>
                         </div>
                         
                         <div>
@@ -337,16 +489,118 @@ const AdminPanel = () => {
                           )}
                         </div>
                         
-                        <Button 
-                          onClick={handleAdicionarPonto} 
-                          disabled={loading || clienteAtual.pontos >= 10}
-                          className="w-full mt-4"
-                        >
-                          {clienteAtual.pontos >= 10 ? "Máximo de pontos atingido" : "Adicionar Ponto"}
-                        </Button>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <Button 
+                            onClick={handleAdicionarPonto} 
+                            disabled={loading || clienteAtual.pontos >= 10}
+                            className="flex-1"
+                          >
+                            {clienteAtual.pontos >= 10 ? "Máximo de pontos atingido" : "Adicionar Ponto"}
+                          </Button>
+                          
+                          {clienteAtual.pontos === 10 && (
+                            <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                              <DialogTrigger asChild>
+                                <Button className="flex-1 bg-green-600 hover:bg-green-700">
+                                  Premiar Cliente e Reiniciar Pontos
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent>
+                                <DialogHeader>
+                                  <DialogTitle>Confirmação</DialogTitle>
+                                  <DialogDescription>
+                                    Deseja realmente premiar e reiniciar os pontos deste cliente?
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <DialogFooter>
+                                  <Button variant="outline" onClick={() => setDialogOpen(false)}>
+                                    Cancelar
+                                  </Button>
+                                  <Button onClick={handleReiniciarPontos} disabled={loading}>
+                                    Confirmar
+                                  </Button>
+                                </DialogFooter>
+                              </DialogContent>
+                            </Dialog>
+                          )}
+                        </div>
                       </div>
                     </div>
                   )}
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          {/* Consulta Tab */}
+          <TabsContent value="consulta">
+            <Card>
+              <CardHeader>
+                <CardTitle>Consulta de Clientes</CardTitle>
+                <CardDescription>
+                  Lista de todos os clientes cadastrados no sistema
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                      <Label htmlFor="filtro_nome">Nome ou Sobrenome</Label>
+                      <Input 
+                        id="filtro_nome" 
+                        name="nome"
+                        value={filtros.nome}
+                        onChange={handleChangeFiltro}
+                        placeholder="Filtrar por nome"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="filtro_telefone">Telefone</Label>
+                      <Input 
+                        id="filtro_telefone" 
+                        name="telefone"
+                        value={filtros.telefone}
+                        onChange={handleChangeFiltro}
+                        placeholder="Filtrar por telefone"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="filtro_codigo">Código do Cartão</Label>
+                      <Input 
+                        id="filtro_codigo" 
+                        name="codigo_cartao"
+                        value={filtros.codigo_cartao}
+                        onChange={handleChangeFiltro}
+                        placeholder="Filtrar por código"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="filtro_pontos">Pontuação</Label>
+                      <Input 
+                        id="filtro_pontos" 
+                        name="pontos"
+                        type="number"
+                        min="0"
+                        max="10"
+                        value={filtros.pontos === undefined ? '' : filtros.pontos}
+                        onChange={handleChangeFiltro}
+                        placeholder="Filtrar por pontos"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div className="flex justify-between items-center">
+                    <Button variant="outline" onClick={limparFiltros}>
+                      Limpar Filtros
+                    </Button>
+                    <Button onClick={aplicarFiltros} disabled={loadingClientes}>
+                      Aplicar Filtros
+                    </Button>
+                  </div>
+                  
+                  <div className="border rounded-md overflow-hidden">
+                    <ClientesTable clientes={clientes} carregando={loadingClientes} />
+                  </div>
                 </div>
               </CardContent>
             </Card>

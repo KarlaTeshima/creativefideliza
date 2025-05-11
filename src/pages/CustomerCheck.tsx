@@ -5,11 +5,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { buscarClientePorCodigo, Cliente } from '@/lib/supabaseClient';
+import { buscarCliente, Cliente } from '@/lib/supabaseClient';
 
 const CustomerCheck = () => {
   const { toast } = useToast();
-  const [codigoCartao, setCodigoCartao] = useState('');
+  const [termo, setTermo] = useState('');
   const [cliente, setCliente] = useState<Cliente | null>(null);
   const [loading, setLoading] = useState(false);
   const [consultaRealizada, setConsultaRealizada] = useState(false);
@@ -17,10 +17,10 @@ const CustomerCheck = () => {
   const handleConsultar = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!codigoCartao.trim()) {
+    if (!termo.trim()) {
       toast({
-        title: "Código não informado",
-        description: "Por favor, informe o código do seu cartão.",
+        title: "Campo de busca vazio",
+        description: "Por favor, informe seu nome, telefone ou código do cartão.",
         variant: "destructive"
       });
       return;
@@ -29,17 +29,21 @@ const CustomerCheck = () => {
     setLoading(true);
     
     try {
-      const clienteEncontrado = await buscarClientePorCodigo(codigoCartao);
+      const clienteEncontrado = await buscarCliente(termo);
       setCliente(clienteEncontrado);
       setConsultaRealizada(true);
       
       if (!clienteEncontrado) {
         toast({
-          title: "Cartão não encontrado",
-          description: "Nenhum cartão encontrado com este código.",
+          title: "Cliente não encontrado",
+          description: "Nenhum cliente encontrado com este termo de busca.",
           variant: "destructive"
         });
       }
+      
+      // Limpar campo após consulta
+      setTermo('');
+      
     } catch (error) {
       console.error("Erro ao consultar pontos:", error);
       toast({
@@ -57,12 +61,12 @@ const CustomerCheck = () => {
     
     const pontos = cliente.pontos;
     
-    if (pontos < 9) {
-      return `Você possui ${pontos} ${pontos === 1 ? 'ponto' : 'pontos'}. Acumule 10 pontos e seja premiado.`;
-    } else if (pontos === 9) {
-      return "Você possui 9 pontos. Acumule mais 1 e será premiado!";
-    } else {
+    if (pontos === 10) {
       return "Você acumulou 10 pontos e pode receber seu prêmio!";
+    } else if (pontos === 9) {
+      return "Você possui 9 pontos. Acumule mais 1 ponto e será premiado!";
+    } else {
+      return `Você possui ${pontos} ${pontos === 1 ? 'ponto' : 'pontos'}. Acumule 10 pontos e seja premiado!`;
     }
   };
   
@@ -82,7 +86,7 @@ const CustomerCheck = () => {
           <CardHeader className="bg-brand-accent/5">
             <CardTitle className="text-brand-accent">Consulte seus pontos</CardTitle>
             <CardDescription>
-              Digite o código do seu cartão de fidelidade para consultar seus pontos
+              Digite seu nome, telefone ou código do cartão para consultar seus pontos
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
@@ -90,10 +94,10 @@ const CustomerCheck = () => {
               <div className="grid gap-4">
                 <div className="grid gap-2">
                   <Input 
-                    id="codigo_cartao" 
-                    value={codigoCartao}
-                    onChange={(e) => setCodigoCartao(e.target.value)}
-                    placeholder="Digite o código do seu cartão"
+                    id="termo_busca" 
+                    value={termo}
+                    onChange={(e) => setTermo(e.target.value)}
+                    placeholder="Digite seu nome, telefone ou código do cartão"
                     required
                   />
                 </div>
@@ -134,7 +138,7 @@ const CustomerCheck = () => {
             {consultaRealizada && !cliente && (
               <div className="mt-8 border rounded-lg p-6 bg-white">
                 <div className="text-center text-gray-500">
-                  <p>Nenhum cartão encontrado com este código.</p>
+                  <p>Nenhum cliente encontrado com este termo.</p>
                   <p className="mt-2">Verifique se digitou corretamente ou contate a administração.</p>
                 </div>
               </div>
