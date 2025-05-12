@@ -28,7 +28,7 @@ const Index = () => {
           </Card>
           
           <Card className="border-2 border-brand-accent/10 shadow-lg transition-all hover:shadow-xl">
-            <CardHeader className="bg-yellow-200">
+            <CardHeader className="bg-orange-300">
               <CardTitle className="text-xl text-gray-700">CONSULTA DE PONTOS</CardTitle>
               <CardDescription className="text-gray-700">Área para clientes consultarem seus pontos</CardDescription>
             </CardHeader>
