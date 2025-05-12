@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Cliente {
@@ -21,7 +20,7 @@ export const cadastrarCliente = async (cliente: Omit<Cliente, 'id' | 'pontos' | 
         sobrenome: cliente.sobrenome || '', 
         telefone: cliente.telefone, 
         codigo_cartao: cliente.codigo_cartao,
-        pontos: 0
+        pontos: 1  // Alterado de 0 para 1 para dar o primeiro ponto automaticamente
       }])
       .select()
       .single();
