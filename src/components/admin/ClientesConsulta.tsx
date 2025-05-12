@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,9 +6,10 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import ClientesTable from '@/components/ClientesTable';
 import { Cliente, buscarClientesComFiltro, listarClientes } from '@/lib/supabaseClient';
-
 const ClientesConsulta = () => {
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [loadingClientes, setLoadingClientes] = useState(false);
   const [filtros, setFiltros] = useState({
@@ -18,7 +18,6 @@ const ClientesConsulta = () => {
     codigo_cartao: '',
     pontos: undefined as number | undefined
   });
-
   const carregarClientes = async () => {
     setLoadingClientes(true);
     try {
@@ -35,7 +34,6 @@ const ClientesConsulta = () => {
       setLoadingClientes(false);
     }
   };
-  
   const aplicarFiltros = async () => {
     setLoadingClientes(true);
     try {
@@ -52,7 +50,6 @@ const ClientesConsulta = () => {
       setLoadingClientes(false);
     }
   };
-
   const handleChangeFiltro = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.name === 'pontos') {
       const pontos = e.target.value ? parseInt(e.target.value) : undefined;
@@ -67,7 +64,6 @@ const ClientesConsulta = () => {
       });
     }
   };
-  
   const limparFiltros = () => {
     setFiltros({
       nome: '',
@@ -82,9 +78,7 @@ const ClientesConsulta = () => {
   React.useEffect(() => {
     carregarClientes();
   }, []);
-
-  return (
-    <Card>
+  return <Card>
       <CardHeader>
         <CardTitle>Consulta de Clientes</CardTitle>
         <CardDescription>
@@ -96,51 +90,24 @@ const ClientesConsulta = () => {
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
               <Label htmlFor="filtro_nome">Nome ou Sobrenome</Label>
-              <Input 
-                id="filtro_nome" 
-                name="nome"
-                value={filtros.nome}
-                onChange={handleChangeFiltro}
-                placeholder="Filtrar por nome"
-              />
+              <Input id="filtro_nome" name="nome" value={filtros.nome} onChange={handleChangeFiltro} placeholder="Filtrar por nome" />
             </div>
             <div>
               <Label htmlFor="filtro_telefone">Telefone</Label>
-              <Input 
-                id="filtro_telefone" 
-                name="telefone"
-                value={filtros.telefone}
-                onChange={handleChangeFiltro}
-                placeholder="Filtrar por telefone"
-              />
+              <Input id="filtro_telefone" name="telefone" value={filtros.telefone} onChange={handleChangeFiltro} placeholder="Filtrar por telefone" />
             </div>
             <div>
               <Label htmlFor="filtro_codigo">Código do Cartão</Label>
-              <Input 
-                id="filtro_codigo" 
-                name="codigo_cartao"
-                value={filtros.codigo_cartao}
-                onChange={handleChangeFiltro}
-                placeholder="Filtrar por código"
-              />
+              <Input id="filtro_codigo" name="codigo_cartao" value={filtros.codigo_cartao} onChange={handleChangeFiltro} placeholder="Filtrar por código" />
             </div>
             <div>
               <Label htmlFor="filtro_pontos">Pontuação</Label>
-              <Input 
-                id="filtro_pontos" 
-                name="pontos"
-                type="number"
-                min="0"
-                max="10"
-                value={filtros.pontos === undefined ? '' : filtros.pontos}
-                onChange={handleChangeFiltro}
-                placeholder="Filtrar por pontos"
-              />
+              <Input id="filtro_pontos" name="pontos" type="number" min="0" max="10" value={filtros.pontos === undefined ? '' : filtros.pontos} onChange={handleChangeFiltro} placeholder="Filtrar por pontos" />
             </div>
           </div>
           
           <div className="flex justify-between items-center">
-            <Button variant="outline" onClick={limparFiltros}>
+            <Button variant="outline" onClick={limparFiltros} className="text-gray-900 font-semibold bg-zinc-400 hover:bg-zinc-300">
               Limpar Filtros
             </Button>
             <Button onClick={aplicarFiltros} disabled={loadingClientes}>
@@ -153,8 +120,6 @@ const ClientesConsulta = () => {
           </div>
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>;
 };
-
 export default ClientesConsulta;
