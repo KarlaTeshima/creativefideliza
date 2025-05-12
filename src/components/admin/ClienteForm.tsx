@@ -5,7 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { cadastrarCliente } from '@/lib/supabaseClient';
+import { cadastrarCliente, buscarClientesComFiltro } from '@/lib/supabaseClient';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const ClienteForm = ({ onClienteAdded }: { onClienteAdded: () => void }) => {
   const { toast } = useToast();
@@ -29,6 +30,19 @@ const ClienteForm = ({ onClienteAdded }: { onClienteAdded: () => void }) => {
     setLoading(true);
     
     try {
+      // Verificar se o telefone já existe
+      const clientesExistentes = await buscarClientesComFiltro({ telefone: formCadastro.telefone });
+      
+      if (clientesExistentes.length > 0) {
+        toast({
+          title: "Telefone já cadastrado",
+          description: "Este número de telefone já está cadastrado no sistema.",
+          variant: "destructive"
+        });
+        setLoading(false);
+        return;
+      }
+
       await cadastrarCliente(formCadastro);
       toast({
         title: "Cliente cadastrado com sucesso!",

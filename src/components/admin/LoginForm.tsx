@@ -5,6 +5,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useIsMobile } from '@/hooks/use-mobile';
 
 interface LoginFormProps {
   onLogin: (password: string) => boolean;
@@ -13,6 +14,7 @@ interface LoginFormProps {
 
 const LoginForm: React.FC<LoginFormProps> = ({ onLogin, loading }) => {
   const [password, setPassword] = useState('');
+  const isMobile = useIsMobile();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -22,7 +24,7 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, loading }) => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>Login Administrativo</CardTitle>
@@ -44,14 +46,22 @@ const LoginForm: React.FC<LoginFormProps> = ({ onLogin, loading }) => {
                   required
                 />
               </div>
-              <Button type="submit" disabled={loading}>
+              <Button 
+                type="submit" 
+                disabled={loading}
+                className={isMobile ? "w-full" : ""}
+              >
                 {loading ? "Verificando..." : "Entrar"}
               </Button>
             </div>
           </form>
         </CardContent>
         <CardFooter className="flex justify-center">
-          <Button variant="link" asChild>
+          <Button 
+            variant="link" 
+            asChild
+            className={isMobile ? "w-full" : ""}
+          >
             <Link to="/">Voltar à página inicial</Link>
           </Button>
         </CardFooter>
