@@ -35,9 +35,9 @@ const AdminPanel = () => {
       <main className="container max-w-7xl mx-auto py-8 px-4">
         <Tabs defaultValue="cadastro">
           <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="cadastro" className="text-slate-500 bg-gray-400 hover:bg-gray-300">CADASTRAR CLIENTES</TabsTrigger>
-            <TabsTrigger value="pontos" className="bg-zinc-300 hover:bg-zinc-200">ADICIONAR PONTOS</TabsTrigger>
-            <TabsTrigger value="consulta" className="bg-slate-300 hover:bg-slate-200">CONSULTAR CLIENTES</TabsTrigger>
+            <TabsTrigger value="cadastro" className="bg-gray-400 hover:bg-gray-300 text-gray-800 font-semibold">CADASTRAR CLIENTES</TabsTrigger>
+            <TabsTrigger value="pontos" className="bg-zinc-300 hover:bg-zinc-200 text-slate-950 font-semibold">ADICIONAR PONTOS</TabsTrigger>
+            <TabsTrigger value="consulta" className="bg-slate-300 hover:bg-slate-200 text-gray-900 font-semibold">CONSULTAR CLIENTES</TabsTrigger>
           </TabsList>
           
           {/* Cadastro Tab */}
