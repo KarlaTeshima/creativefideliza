@@ -13,8 +13,8 @@ const Index = () => {
       <main className="flex-1 container max-w-7xl mx-auto py-12 px-4">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
           <Card className="border-2 border-brand-primary/10 shadow-lg transition-all hover:shadow-xl">
-            <CardHeader className="bg-brand-primary/5">
-              <CardTitle className="text-xl text-sky-500">PAINEL DO ADMINISTRADOR</CardTitle>
+            <CardHeader className="bg-gray-300">
+              <CardTitle className="text-xl text-gray-600">PAINEL DO ADMINISTRADOR</CardTitle>
               <CardDescription>Acesso ao painel de gestão para a empresa</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
@@ -28,12 +28,12 @@ const Index = () => {
           </Card>
           
           <Card className="border-2 border-brand-accent/10 shadow-lg transition-all hover:shadow-xl">
-            <CardHeader className="bg-brand-accent/5">
+            <CardHeader className="bg-gray-300">
               <CardTitle className="text-xl text-gray-600">CONSULTA DE PONTOS</CardTitle>
               <CardDescription>Área para clientes consultarem seus pontos</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
-              <p>Verifique quantos pontos você acumulou no seu cartão de fidelidade.</p>
+              <p>Verifique quantos pontos você acumulou.</p>
             </CardContent>
             <CardFooter>
               <Button asChild className="w-full mt-4 bg-brand-accent hover:bg-brand-accent/90">
