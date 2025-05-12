@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Cliente {
@@ -34,13 +35,13 @@ export const cadastrarCliente = async (cliente: Omit<Cliente, 'id' | 'pontos' | 
   }
 };
 
-// Função para buscar cliente por qualquer campo (código, nome, sobrenome ou telefone)
+// Função para buscar cliente por telefone ou código do cartão
 export const buscarCliente = async (termo: string): Promise<Cliente | null> => {
   try {
     const { data, error } = await supabase
       .from('clientes')
       .select('*')
-      .or(`nome.ilike.%${termo}%,sobrenome.ilike.%${termo}%,telefone.ilike.%${termo}%,codigo_cartao.ilike.%${termo}%`)
+      .or(`telefone.eq.${termo},codigo_cartao.eq.${termo}`)
       .limit(1)
       .maybeSingle();
     

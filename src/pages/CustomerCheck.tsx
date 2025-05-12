@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { buscarCliente, Cliente } from '@/lib/supabaseClient';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const CustomerCheck = () => {
   const { toast } = useToast();
@@ -13,6 +14,7 @@ const CustomerCheck = () => {
   const [cliente, setCliente] = useState<Cliente | null>(null);
   const [loading, setLoading] = useState(false);
   const [consultaRealizada, setConsultaRealizada] = useState(false);
+  const [tipoConsulta, setTipoConsulta] = useState<'telefone' | 'codigo'>('telefone');
   
   const handleConsultar = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,7 +22,9 @@ const CustomerCheck = () => {
     if (!termo.trim()) {
       toast({
         title: "Campo de busca vazio",
-        description: "Por favor, informe seu nome, telefone ou código do cartão.",
+        description: tipoConsulta === 'telefone' 
+          ? "Por favor, informe o número de telefone."
+          : "Por favor, informe o código do cartão.",
         variant: "destructive"
       });
       return;
@@ -86,10 +90,17 @@ const CustomerCheck = () => {
           <CardHeader className="bg-brand-accent/5">
             <CardTitle className="text-brand-accent">Consulte seus pontos</CardTitle>
             <CardDescription>
-              Digite seu nome, telefone ou código do cartão para consultar seus pontos
+              Digite seu telefone ou código do cartão para consultar seus pontos
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-6">
+            <Tabs defaultValue="telefone" onValueChange={(value) => setTipoConsulta(value as 'telefone' | 'codigo')} className="mb-4">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="telefone">Consultar por Telefone</TabsTrigger>
+                <TabsTrigger value="codigo">Consultar por Código</TabsTrigger>
+              </TabsList>
+            </Tabs>
+            
             <form onSubmit={handleConsultar}>
               <div className="grid gap-4">
                 <div className="grid gap-2">
@@ -97,7 +108,9 @@ const CustomerCheck = () => {
                     id="termo_busca" 
                     value={termo}
                     onChange={(e) => setTermo(e.target.value)}
-                    placeholder="Digite seu nome, telefone ou código do cartão"
+                    placeholder={tipoConsulta === 'telefone' 
+                      ? "Digite seu número de telefone" 
+                      : "Digite o código do seu cartão"}
                     required
                   />
                 </div>
