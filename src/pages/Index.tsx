@@ -13,9 +13,9 @@ const Index = () => {
       <main className="flex-1 container max-w-7xl mx-auto py-12 px-4">
         <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-2">
           <Card className="border-2 border-brand-primary/10 shadow-lg transition-all hover:shadow-xl">
-            <CardHeader className="bg-gray-300">
-              <CardTitle className="text-xl text-gray-600">PAINEL DO ADMINISTRADOR</CardTitle>
-              <CardDescription>Acesso ao painel de gestão para a empresa</CardDescription>
+            <CardHeader className="bg-sky-300">
+              <CardTitle className="text-xl text-gray-700">PAINEL DO ADMINISTRADOR</CardTitle>
+              <CardDescription className="text-gray-700">Acesso ao painel de gestão para a empresa</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
               <p>Cadastro de clientes e gerenciamento de pontos.</p>
@@ -28,9 +28,9 @@ const Index = () => {
           </Card>
           
           <Card className="border-2 border-brand-accent/10 shadow-lg transition-all hover:shadow-xl">
-            <CardHeader className="bg-gray-300">
-              <CardTitle className="text-xl text-gray-600">CONSULTA DE PONTOS</CardTitle>
-              <CardDescription>Área para clientes consultarem seus pontos</CardDescription>
+            <CardHeader className="bg-yellow-200">
+              <CardTitle className="text-xl text-gray-700">CONSULTA DE PONTOS</CardTitle>
+              <CardDescription className="text-gray-700">Área para clientes consultarem seus pontos</CardDescription>
             </CardHeader>
             <CardContent className="pt-6">
               <p>Verifique quantos pontos você acumulou.</p>
