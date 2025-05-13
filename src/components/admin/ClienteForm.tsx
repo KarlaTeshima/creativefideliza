@@ -7,7 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cadastrarCliente, buscarCliente } from '@/lib/supabaseClient';
 import { useIsMobile } from '@/hooks/use-mobile';
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface ClienteFormProps {
   onClienteAdded: () => void;
@@ -174,7 +174,7 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ onClienteAdded }) => {
             <div className="flex justify-center items-center">
               {qrCodeValue && (
                 <div className="bg-white p-4 rounded-md shadow-md">
-                  <QRCode value={qrCodeValue} size={128} />
+                  <QRCodeSVG value={qrCodeValue} size={128} />
                   <p className="text-center mt-2 text-sm text-gray-500">Código: {qrCodeValue}</p>
                 </div>
               )}
