@@ -163,7 +163,7 @@ const PontosManager: React.FC<PontosManagerProps> = ({ onClienteUpdated }) => {
                 id="termo_busca" 
                 value={termoBusca}
                 onChange={(e) => setTermoBusca(e.target.value)}
-                placeholder="Nome, telefone ou código do cartão"
+                placeholder="Telefone ou código do cartão"
               />
               <Button 
                 onClick={handleBuscarCliente} 
