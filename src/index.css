@@ -16,10 +16,10 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 0%;
 
-    --primary: 199 81% 45%;
+    --primary: 198 81% 51%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 0% 68%;
+    --secondary: 210 10% 68%;
     --secondary-foreground: 0 0% 0%;
 
     --muted: 210 0% 96%;
@@ -33,7 +33,7 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 199 81% 45%;
+    --ring: 198 81% 51%;
 
     --radius: 0.5rem;
 
@@ -93,10 +93,33 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Nunito', sans-serif;
+    font-family: 'Nunito', 'Avenir', sans-serif;
   }
 }
 
 .avenir {
   font-family: 'Nunito', 'Avenir', sans-serif;
+}
+
+/* Adicionar classes de sombras elegantes */
+.shadow-elegant {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.12);
+}
+
+.shadow-elegant-lg {
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1), 0 4px 10px rgba(0, 0, 0, 0.04);
+}
+
+.shadow-elegant-hover {
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.shadow-elegant-hover:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12), 0 3px 8px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Efeitos de transição para botões */
+.btn-transition {
+  transition: all 0.3s ease;
 }

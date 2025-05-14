@@ -64,10 +64,12 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				brand: {
-					primary: '#27aae1', // Main blue color
-					secondary: '#aeaeae', // Gray color
-					dark: '#000000', // Black color
-					light: '#F3F4F6'
+					primary: '#27aae1', // Azul principal
+					secondary: '#aeaeae', // Cinza secundário
+					dark: '#000000', // Preto
+					light: '#F3F4F6',
+					primaryHover: '#1e95c9', // Versão mais escura para hover
+					secondaryHover: '#939393' // Versão mais escura para hover
 				}
 			},
 			fontFamily: {
@@ -77,6 +79,12 @@ export default {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',
 				sm: 'calc(var(--radius) - 4px)'
+			},
+			boxShadow: {
+				'card': '0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.12)',
+				'card-hover': '0 6px 18px rgba(0, 0, 0, 0.12), 0 3px 8px rgba(0, 0, 0, 0.08)',
+				'button': '0 2px 6px rgba(0, 0, 0, 0.15)',
+				'button-hover': '0 4px 10px rgba(0, 0, 0, 0.2)',
 			},
 			keyframes: {
 				'accordion-down': {

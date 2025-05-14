@@ -57,7 +57,7 @@ const ClienteSearch: React.FC<ClienteSearchProps> = ({
   };
 
   return (
-    <div className="space-y-4 bg-gray-50 p-5 rounded-lg">
+    <div className="space-y-4 bg-gradient-to-b from-gray-50 to-white p-6 rounded-lg border border-gray-100 shadow-elegant">
       <div className="space-y-2">
         <Label htmlFor="termo_busca" className="text-gray-700 font-medium">Buscar Cliente</Label>
         <Input 
@@ -65,13 +65,13 @@ const ClienteSearch: React.FC<ClienteSearchProps> = ({
           value={termoBusca}
           onChange={(e) => setTermoBusca(e.target.value)}
           placeholder="Telefone ou código do cartão"
-          className="border-brand-secondary/30 focus:border-brand-primary focus:ring-brand-primary"
+          className="border-brand-secondary/30 focus:border-brand-primary focus:ring-brand-primary shadow-sm"
         />
       </div>
       <Button 
         onClick={handleBuscarCliente} 
         disabled={!termoBusca.trim()}
-        className="w-full bg-brand-primary hover:bg-brand-primary/80"
+        className="w-full bg-brand-primary hover:bg-brand-secondary shadow-elegant-hover"
       >
         Buscar
       </Button>

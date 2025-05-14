@@ -124,12 +124,12 @@ const ClienteDetails: React.FC<ClienteDetailsProps> = ({
   };
 
   return (
-    <div className="border rounded-md p-6 bg-white shadow-sm">
+    <div className="border rounded-md p-6 bg-white shadow-elegant-lg transition-all duration-300 hover:shadow-card-hover">
       <div className="space-y-6">
-        <div className="bg-brand-primary/10 p-6 rounded-lg">
-          <h3 className="font-semibold text-lg text-center mb-4 text-brand-primary">Cliente</h3>
+        <div className="bg-gradient-to-r from-brand-primary/15 to-brand-primary/5 p-6 rounded-lg border border-brand-primary/10">
+          <h3 className="font-bold text-xl text-center mb-4 text-brand-primary">Detalhes do Cliente</h3>
           <div className="text-center">
-            <p className="text-2xl font-bold text-brand-primary">
+            <p className="text-3xl font-bold text-brand-primary">
               {cliente.nome} {cliente.sobrenome}
             </p>
             <p className="text-gray-500 mt-2">
@@ -138,17 +138,19 @@ const ClienteDetails: React.FC<ClienteDetailsProps> = ({
           </div>
         </div>
         
-        <div className="bg-brand-primary/10 p-6 rounded-lg">
-          <h4 className="font-semibold text-lg text-center mb-3 text-brand-primary">Pontos Acumulados</h4>
+        <div className="bg-gradient-to-r from-brand-primary/15 to-brand-primary/5 p-6 rounded-lg border border-brand-primary/10">
+          <h4 className="font-bold text-xl text-center mb-3 text-brand-primary">Pontos Acumulados</h4>
           <div className="text-center">
-            <p className="text-5xl font-bold text-brand-primary">{cliente.pontos}</p>
-            <p className="text-gray-700 mt-3">{renderPointsMessage()}</p>
+            <div className="bg-white rounded-full w-24 h-24 mx-auto flex items-center justify-center border-4 border-brand-primary shadow-lg mb-4">
+              <p className="text-5xl font-bold text-brand-primary">{cliente.pontos}</p>
+            </div>
+            <p className="text-gray-700 mt-3 font-medium">{renderPointsMessage()}</p>
           </div>
           
           {/* Avisos baseados na pontuação */}
           {cliente.pontos === 9 && (
-            <Alert className="mt-4 border-amber-500/50 bg-amber-500/10">
-              <AlertTitle className="text-amber-600">Atenção</AlertTitle>
+            <Alert className="mt-5 border-amber-500/50 bg-amber-500/10 shadow-sm">
+              <AlertTitle className="text-amber-600 font-bold">Atenção</AlertTitle>
               <AlertDescription className="text-amber-700">
                 Este cliente está a 1 ponto do prêmio!
               </AlertDescription>
@@ -156,8 +158,8 @@ const ClienteDetails: React.FC<ClienteDetailsProps> = ({
           )}
           
           {cliente.pontos === 10 && (
-            <Alert className="mt-4 border-green-500/50 bg-green-500/10">
-              <AlertTitle className="text-green-600">Prêmio!</AlertTitle>
+            <Alert className="mt-5 border-green-500/50 bg-green-500/10 shadow-sm">
+              <AlertTitle className="text-green-600 font-bold">Prêmio!</AlertTitle>
               <AlertDescription className="text-green-700">
                 Este cliente deve receber o prêmio agora.
               </AlertDescription>
@@ -169,7 +171,8 @@ const ClienteDetails: React.FC<ClienteDetailsProps> = ({
           <Button 
             onClick={handleAdicionarPonto} 
             disabled={loading || cliente.pontos >= 10}
-            className="w-full bg-brand-primary hover:bg-brand-primary/80"
+            className="w-full bg-brand-primary hover:bg-brand-secondary shadow-elegant-hover text-white font-medium py-3"
+            size="lg"
           >
             {cliente.pontos >= 10 ? "Máximo de pontos atingido" : "Adicionar Ponto"}
           </Button>
@@ -177,11 +180,11 @@ const ClienteDetails: React.FC<ClienteDetailsProps> = ({
           {cliente.pontos === 10 && (
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="w-full bg-green-600 hover:bg-green-700">
+                <Button className="w-full bg-green-600 hover:bg-green-700 shadow-elegant-hover text-white font-medium py-3" size="lg">
                   Premiar Cliente e Reiniciar Pontos
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="shadow-elegant-lg">
                 <DialogHeader>
                   <DialogTitle>Confirmação</DialogTitle>
                   <DialogDescription>
