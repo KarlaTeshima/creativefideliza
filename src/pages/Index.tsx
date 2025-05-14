@@ -20,7 +20,7 @@ const Index = () => {
             <CardContent className="pt-6">
               <p>Cadastro de clientes e gerenciamento de pontos.</p>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="">
               <Button asChild className="w-full mt-4 bg-brand-primary hover:bg-brand-primary/90">
                 <Link to="/admin">Acessar painel administrativo</Link>
               </Button>
