@@ -57,22 +57,23 @@ const ClienteSearch: React.FC<ClienteSearchProps> = ({
   };
 
   return (
-    <div className="grid gap-2">
-      <Label htmlFor="termo_busca">Buscar Cliente</Label>
-      <div className="flex gap-2">
+    <div className="space-y-3">
+      <div className="space-y-2">
+        <Label htmlFor="termo_busca">Buscar Cliente</Label>
         <Input 
           id="termo_busca" 
           value={termoBusca}
           onChange={(e) => setTermoBusca(e.target.value)}
           placeholder="Telefone ou código do cartão"
         />
-        <Button 
-          onClick={handleBuscarCliente} 
-          disabled={!termoBusca.trim()}
-        >
-          Buscar
-        </Button>
       </div>
+      <Button 
+        onClick={handleBuscarCliente} 
+        disabled={!termoBusca.trim()}
+        className="w-full"
+      >
+        Buscar
+      </Button>
     </div>
   );
 };

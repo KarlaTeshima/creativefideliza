@@ -7,7 +7,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { cadastrarCliente, buscarCliente } from '@/lib/supabaseClient';
 import { useIsMobile } from '@/hooks/use-mobile';
-import { QRCodeSVG } from 'qrcode.react';
 
 interface ClienteFormProps {
   onClienteAdded: () => void;
@@ -25,7 +24,6 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ onClienteAdded }) => {
   });
   
   const [loading, setLoading] = useState(false);
-  const [qrCodeValue, setQrCodeValue] = useState<string | null>(null);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -34,19 +32,15 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ onClienteAdded }) => {
     });
   };
   
-  const handleGenerateCode = () => {
-    const randomCode = Math.floor(100000 + Math.random() * 900000).toString();
-    setFormData({
-      ...formData,
-      codigo_cartao: randomCode
-    });
-    setQrCodeValue(randomCode);
+  // Gera código automaticamente para o cliente
+  const generateRandomCode = () => {
+    return Math.floor(100000 + Math.random() * 900000).toString();
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.nome || !formData.telefone || !formData.codigo_cartao) {
+    if (!formData.nome || !formData.telefone) {
       toast({
         title: "Campos obrigatórios",
         description: "Preencha todos os campos obrigatórios.",
@@ -54,6 +48,12 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ onClienteAdded }) => {
       });
       return;
     }
+    
+    // Gerar código automaticamente se não for fornecido
+    const dadosSubmit = {
+      ...formData,
+      codigo_cartao: formData.codigo_cartao || generateRandomCode()
+    };
     
     setLoading(true);
     
@@ -70,7 +70,7 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ onClienteAdded }) => {
         return;
       }
       
-      await cadastrarCliente(formData);
+      await cadastrarCliente(dadosSubmit);
       
       toast({
         title: "Cliente cadastrado com sucesso",
@@ -85,7 +85,6 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ onClienteAdded }) => {
         codigo_cartao: ''
       });
       
-      setQrCodeValue(null);
       onClienteAdded();
     } catch (error) {
       console.error("Erro ao cadastrar cliente:", error);
@@ -109,7 +108,7 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ onClienteAdded }) => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="nome">Nome *</Label>
               <Input 
@@ -147,45 +146,22 @@ const ClienteForm: React.FC<ClienteFormProps> = ({ onClienteAdded }) => {
             />
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-2">
-              <Label htmlFor="codigo_cartao">Código do Cartão *</Label>
-              <div className="flex space-x-2">
-                <Input 
-                  id="codigo_cartao" 
-                  name="codigo_cartao" 
-                  value={formData.codigo_cartao} 
-                  onChange={handleChange} 
-                  placeholder="Código do cartão fidelidade"
-                  required
-                  className="flex-grow"
-                />
-                <Button 
-                  type="button" 
-                  onClick={handleGenerateCode} 
-                  variant="outline"
-                  className={isMobile ? "w-full mt-2" : ""}
-                >
-                  Gerar
-                </Button>
-              </div>
-            </div>
-            
-            <div className="flex justify-center items-center">
-              {qrCodeValue && (
-                <div className="bg-white p-4 rounded-md shadow-md">
-                  <QRCodeSVG value={qrCodeValue} size={128} />
-                  <p className="text-center mt-2 text-sm text-gray-500">Código: {qrCodeValue}</p>
-                </div>
-              )}
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="codigo_cartao">Código do Cartão (opcional)</Label>
+            <Input 
+              id="codigo_cartao" 
+              name="codigo_cartao" 
+              value={formData.codigo_cartao} 
+              onChange={handleChange} 
+              placeholder="Código será gerado automaticamente se não preenchido"
+            />
           </div>
           
-          <div className="flex justify-end">
+          <div className="pt-2">
             <Button 
               type="submit" 
               disabled={loading}
-              className={isMobile ? "w-full" : ""}
+              className="w-full"
             >
               {loading ? "Cadastrando..." : "Cadastrar Cliente"}
             </Button>

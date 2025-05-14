@@ -27,7 +27,7 @@ const PontosManager: React.FC<PontosManagerProps> = ({ onClienteUpdated }) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="grid gap-6">
+        <div className="space-y-6">
           <ClienteSearch 
             onClienteFound={handleClienteFound} 
             setLoading={setLoading}

@@ -114,17 +114,25 @@ const ClienteDetails: React.FC<ClienteDetailsProps> = ({
 
   return (
     <div className="border rounded-md p-4 bg-white">
-      <div className="space-y-4">
-        <div>
-          <h3 className="font-medium">Cliente encontrado</h3>
-          <p className="text-sm text-gray-500">
-            {cliente.nome} {cliente.sobrenome} - {cliente.telefone}
-          </p>
+      <div className="space-y-6">
+        <div className="bg-gray-100 p-4 rounded-lg">
+          <h3 className="font-semibold text-lg text-center mb-2">Cliente</h3>
+          <div className="text-center">
+            <p className="text-xl font-bold text-primary">
+              {cliente.nome} {cliente.sobrenome}
+            </p>
+            <p className="text-gray-500">
+              {cliente.telefone}
+            </p>
+          </div>
         </div>
         
-        <div>
-          <h4 className="font-medium">Status dos pontos</h4>
-          <p className="text-lg mt-1">{renderPointsMessage()}</p>
+        <div className="bg-gray-100 p-4 rounded-lg">
+          <h4 className="font-semibold text-lg text-center mb-2">Pontos Acumulados</h4>
+          <div className="text-center">
+            <p className="text-4xl font-bold text-primary">{cliente.pontos}</p>
+            <p className="text-gray-700 mt-2">{renderPointsMessage()}</p>
+          </div>
           
           {/* Avisos baseados na pontuação */}
           {cliente.pontos === 9 && (
@@ -146,11 +154,11 @@ const ClienteDetails: React.FC<ClienteDetailsProps> = ({
           )}
         </div>
         
-        <div className="flex flex-col sm:flex-row gap-2">
+        <div className="space-y-3">
           <Button 
             onClick={handleAdicionarPonto} 
             disabled={loading || cliente.pontos >= 10}
-            className="flex-1"
+            className="w-full"
           >
             {cliente.pontos >= 10 ? "Máximo de pontos atingido" : "Adicionar Ponto"}
           </Button>
@@ -158,7 +166,7 @@ const ClienteDetails: React.FC<ClienteDetailsProps> = ({
           {cliente.pontos === 10 && (
             <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="flex-1 bg-green-600 hover:bg-green-700">
+                <Button className="w-full bg-green-600 hover:bg-green-700">
                   Premiar Cliente e Reiniciar Pontos
                 </Button>
               </DialogTrigger>
