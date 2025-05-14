@@ -64,12 +64,14 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				brand: {
-					primary: '#3B82F6',
-					secondary: '#10B981',
-					accent: '#F59E0B',
-					light: '#F3F4F6',
-					dark: '#1F2937'
+					primary: '#27aae1', // Main blue color
+					secondary: '#aeaeae', // Gray color
+					dark: '#000000', // Black color
+					light: '#F3F4F6'
 				}
+			},
+			fontFamily: {
+				sans: ['Nunito', 'Avenir', 'sans-serif'],
 			},
 			borderRadius: {
 				lg: 'var(--radius)',

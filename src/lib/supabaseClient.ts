@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Cliente {
@@ -78,22 +77,30 @@ export const adicionarPonto = async (codigo: string): Promise<Cliente | null> =>
     // Primeiro busca o cliente
     const cliente = await buscarClientePorCodigo(codigo);
     
-    if (!cliente) return null;
+    if (!cliente) {
+      console.error('Cliente não encontrado para o código:', codigo);
+      return null;
+    }
     
     // Atualiza os pontos - limitado a 10
+    const novoPontos = Math.min(cliente.pontos + 1, 10);
+    
     const { data, error } = await supabase
       .from('clientes')
-      .update({ pontos: Math.min(cliente.pontos + 1, 10) })
+      .update({ pontos: novoPontos })
       .eq('codigo_cartao', codigo)
       .select()
-      .single();
+      .maybeSingle();
     
-    if (error) throw error;
+    if (error) {
+      console.error('Erro ao atualizar pontos:', error);
+      throw error;
+    }
     
     return data;
   } catch (error) {
     console.error('Erro ao adicionar ponto:', error);
-    return null;
+    throw error;
   }
 };
 
@@ -105,14 +112,14 @@ export const reiniciarPontos = async (codigo: string): Promise<Cliente | null> =
       .update({ pontos: 0 })
       .eq('codigo_cartao', codigo)
       .select()
-      .single();
+      .maybeSingle();
     
     if (error) throw error;
     
     return data;
   } catch (error) {
     console.error('Erro ao reiniciar pontos:', error);
-    return null;
+    throw error;
   }
 };
 

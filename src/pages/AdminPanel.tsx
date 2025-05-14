@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,29 +30,41 @@ const AdminPanel = () => {
   }
 
   // Se o usuário estiver autenticado, mostra o painel admin
-  return <div className="min-h-screen bg-gray-50">
+  return <div className="min-h-screen bg-gray-50 font-sans">
       <AdminHeader logout={logout} />
       
       <main className="container max-w-7xl mx-auto py-8 px-4">
-        <Tabs defaultValue="cadastro">
-          <TabsList className="grid w-full grid-cols-3 mb-8">
-            <TabsTrigger value="cadastro" className="bg-gray-400 hover:bg-gray-300 text-gray-800 font-semibold">CADASTRAR CLIENTES</TabsTrigger>
-            <TabsTrigger value="pontos" className="bg-zinc-300 hover:bg-zinc-200 text-slate-950 font-semibold">ADICIONAR PONTOS</TabsTrigger>
-            <TabsTrigger value="consulta" className="bg-slate-300 hover:bg-slate-200 text-gray-900 font-semibold">CONSULTAR CLIENTES</TabsTrigger>
+        <Tabs defaultValue="cadastro" orientation="vertical" className="space-y-6">
+          <TabsList className="flex flex-col space-y-2 w-full md:w-auto">
+            <TabsTrigger 
+              value="cadastro" 
+              className="bg-brand-primary text-white hover:bg-brand-primary/80 py-4 px-6 w-full text-left justify-start font-semibold">
+              CADASTRAR CLIENTES
+            </TabsTrigger>
+            <TabsTrigger 
+              value="pontos" 
+              className="bg-brand-primary text-white hover:bg-brand-primary/80 py-4 px-6 w-full text-left justify-start font-semibold">
+              ADICIONAR PONTOS
+            </TabsTrigger>
+            <TabsTrigger 
+              value="consulta" 
+              className="bg-brand-primary text-white hover:bg-brand-primary/80 py-4 px-6 w-full text-left justify-start font-semibold">
+              CONSULTAR CLIENTES
+            </TabsTrigger>
           </TabsList>
           
           {/* Cadastro Tab */}
-          <TabsContent value="cadastro">
+          <TabsContent value="cadastro" className="mt-6">
             <ClienteForm onClienteAdded={handleClienteAdded} />
           </TabsContent>
           
           {/* Pontos Tab */}
-          <TabsContent value="pontos">
+          <TabsContent value="pontos" className="mt-6">
             <PontosManager onClienteUpdated={handleClienteAdded} />
           </TabsContent>
           
           {/* Consulta Tab */}
-          <TabsContent value="consulta">
+          <TabsContent value="consulta" className="mt-6">
             <ClientesConsulta />
           </TabsContent>
         </Tabs>

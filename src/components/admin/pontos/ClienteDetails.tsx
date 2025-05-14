@@ -1,12 +1,13 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { 
   adicionarPonto, 
   reiniciarPontos, 
-  Cliente
+  Cliente,
+  buscarClientePorCodigo
 } from '@/lib/supabaseClient';
 import {
   Dialog,
@@ -28,7 +29,7 @@ interface ClienteDetailsProps {
 }
 
 const ClienteDetails: React.FC<ClienteDetailsProps> = ({ 
-  cliente, 
+  cliente: clienteInicial, 
   loading, 
   setLoading,
   onClienteUpdated,
@@ -37,6 +38,12 @@ const ClienteDetails: React.FC<ClienteDetailsProps> = ({
 }) => {
   const { toast } = useToast();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [cliente, setCliente] = useState<Cliente>(clienteInicial);
+
+  // Efeito para atualizar o cliente quando clienteInicial mudar
+  useEffect(() => {
+    setCliente(clienteInicial);
+  }, [clienteInicial]);
 
   const handleAdicionarPonto = async () => {
     if (!cliente) return;
@@ -47,6 +54,7 @@ const ClienteDetails: React.FC<ClienteDetailsProps> = ({
       const clienteAtualizado = await adicionarPonto(cliente.codigo_cartao);
       
       if (clienteAtualizado) {
+        setCliente(clienteAtualizado);
         setPointsAdded(true);
         toast({
           title: "Ponto adicionado com sucesso!",
@@ -55,12 +63,14 @@ const ClienteDetails: React.FC<ClienteDetailsProps> = ({
         
         // Também atualiza a lista de clientes
         onClienteUpdated();
+      } else {
+        throw new Error("Erro ao adicionar ponto: o cliente não foi encontrado");
       }
     } catch (error) {
       console.error("Erro ao adicionar ponto:", error);
       toast({
         title: "Erro ao adicionar ponto",
-        description: "Ocorreu um erro ao adicionar o ponto.",
+        description: "Ocorreu um erro ao adicionar o ponto. Por favor, tente novamente.",
         variant: "destructive"
       });
     } finally {
@@ -78,6 +88,7 @@ const ClienteDetails: React.FC<ClienteDetailsProps> = ({
       const clienteAtualizado = await reiniciarPontos(cliente.codigo_cartao);
       
       if (clienteAtualizado) {
+        setCliente(clienteAtualizado);
         toast({
           title: "Cliente premiado com sucesso!",
           description: "Cartão reiniciado e pronto para reutilização."
@@ -113,25 +124,25 @@ const ClienteDetails: React.FC<ClienteDetailsProps> = ({
   };
 
   return (
-    <div className="border rounded-md p-4 bg-white">
+    <div className="border rounded-md p-6 bg-white shadow-sm">
       <div className="space-y-6">
-        <div className="bg-gray-100 p-4 rounded-lg">
-          <h3 className="font-semibold text-lg text-center mb-2">Cliente</h3>
+        <div className="bg-brand-primary/10 p-6 rounded-lg">
+          <h3 className="font-semibold text-lg text-center mb-4 text-brand-primary">Cliente</h3>
           <div className="text-center">
-            <p className="text-xl font-bold text-primary">
+            <p className="text-2xl font-bold text-brand-primary">
               {cliente.nome} {cliente.sobrenome}
             </p>
-            <p className="text-gray-500">
+            <p className="text-gray-500 mt-2">
               {cliente.telefone}
             </p>
           </div>
         </div>
         
-        <div className="bg-gray-100 p-4 rounded-lg">
-          <h4 className="font-semibold text-lg text-center mb-2">Pontos Acumulados</h4>
+        <div className="bg-brand-primary/10 p-6 rounded-lg">
+          <h4 className="font-semibold text-lg text-center mb-3 text-brand-primary">Pontos Acumulados</h4>
           <div className="text-center">
-            <p className="text-4xl font-bold text-primary">{cliente.pontos}</p>
-            <p className="text-gray-700 mt-2">{renderPointsMessage()}</p>
+            <p className="text-5xl font-bold text-brand-primary">{cliente.pontos}</p>
+            <p className="text-gray-700 mt-3">{renderPointsMessage()}</p>
           </div>
           
           {/* Avisos baseados na pontuação */}
@@ -158,7 +169,7 @@ const ClienteDetails: React.FC<ClienteDetailsProps> = ({
           <Button 
             onClick={handleAdicionarPonto} 
             disabled={loading || cliente.pontos >= 10}
-            className="w-full"
+            className="w-full bg-brand-primary hover:bg-brand-primary/80"
           >
             {cliente.pontos >= 10 ? "Máximo de pontos atingido" : "Adicionar Ponto"}
           </Button>

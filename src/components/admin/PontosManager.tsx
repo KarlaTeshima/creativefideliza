@@ -19,15 +19,15 @@ const PontosManager: React.FC<PontosManagerProps> = ({ onClienteUpdated }) => {
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Gerenciamento de Pontos</CardTitle>
-        <CardDescription>
+    <Card className="border-brand-secondary/20 shadow-md">
+      <CardHeader className="bg-brand-primary/10">
+        <CardTitle className="text-brand-primary text-2xl">Gerenciamento de Pontos</CardTitle>
+        <CardDescription className="text-gray-600">
           Adicione pontos aos clientes cadastrados
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
+      <CardContent className="pt-6">
+        <div className="space-y-8">
           <ClienteSearch 
             onClienteFound={handleClienteFound} 
             setLoading={setLoading}

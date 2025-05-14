@@ -57,20 +57,21 @@ const ClienteSearch: React.FC<ClienteSearchProps> = ({
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4 bg-gray-50 p-5 rounded-lg">
       <div className="space-y-2">
-        <Label htmlFor="termo_busca">Buscar Cliente</Label>
+        <Label htmlFor="termo_busca" className="text-gray-700 font-medium">Buscar Cliente</Label>
         <Input 
           id="termo_busca" 
           value={termoBusca}
           onChange={(e) => setTermoBusca(e.target.value)}
           placeholder="Telefone ou código do cartão"
+          className="border-brand-secondary/30 focus:border-brand-primary focus:ring-brand-primary"
         />
       </div>
       <Button 
         onClick={handleBuscarCliente} 
         disabled={!termoBusca.trim()}
-        className="w-full"
+        className="w-full bg-brand-primary hover:bg-brand-primary/80"
       >
         Buscar
       </Button>
