@@ -35,7 +35,7 @@ const Index = () => {
             <CardContent className="pt-6">
               <p>Verifique quantos pontos você acumulou.</p>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="">
               <Button asChild className="w-full mt-4 bg-brand-accent hover:bg-brand-accent/90">
                 <Link to="/check">Consultar meus pontos</Link>
               </Button>
