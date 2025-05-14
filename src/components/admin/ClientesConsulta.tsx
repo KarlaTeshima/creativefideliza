@@ -6,6 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import ClientesTable from '@/components/ClientesTable';
 import { Cliente, buscarClientesComFiltro, listarClientes } from '@/lib/supabaseClient';
+
 const ClientesConsulta = () => {
   const {
     toast
@@ -18,6 +19,7 @@ const ClientesConsulta = () => {
     codigo_cartao: '',
     pontos: undefined as number | undefined
   });
+
   const carregarClientes = async () => {
     setLoadingClientes(true);
     try {
@@ -34,6 +36,7 @@ const ClientesConsulta = () => {
       setLoadingClientes(false);
     }
   };
+
   const aplicarFiltros = async () => {
     setLoadingClientes(true);
     try {
@@ -50,6 +53,7 @@ const ClientesConsulta = () => {
       setLoadingClientes(false);
     }
   };
+
   const handleChangeFiltro = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.name === 'pontos') {
       const pontos = e.target.value ? parseInt(e.target.value) : undefined;
@@ -64,6 +68,7 @@ const ClientesConsulta = () => {
       });
     }
   };
+
   const limparFiltros = () => {
     setFiltros({
       nome: '',
@@ -78,6 +83,7 @@ const ClientesConsulta = () => {
   React.useEffect(() => {
     carregarClientes();
   }, []);
+
   return <Card>
       <CardHeader>
         <CardTitle>Consulta de Clientes</CardTitle>
@@ -110,7 +116,11 @@ const ClientesConsulta = () => {
             <Button variant="outline" onClick={limparFiltros} className="text-gray-900 font-semibold bg-zinc-400 hover:bg-zinc-300">
               Limpar Filtros
             </Button>
-            <Button onClick={aplicarFiltros} disabled={loadingClientes}>
+            <Button 
+              onClick={aplicarFiltros} 
+              disabled={loadingClientes}
+              className="bg-yellow-500 hover:bg-yellow-600 text-white shadow-button-hover"
+            >
               Aplicar Filtros
             </Button>
           </div>
@@ -122,4 +132,5 @@ const ClientesConsulta = () => {
       </CardContent>
     </Card>;
 };
+
 export default ClientesConsulta;
